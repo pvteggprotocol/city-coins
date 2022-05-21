@@ -815,13 +815,12 @@ contract CityCoin is ERC20, Ownable {
 
         whitelistedFromFee[owner()] = false;
         whitelistedFromFee[newOwner] = true;
-
         super.transferOwnership(newOwner);
     }
 
-    function transfer(address to, uint256 _amount) public virtual override returns (bool) {
+    function transfer(address to, uint256 _amount) public virtual override(ERC20) returns (bool) {
         uint256 amount = _amount;
-        if(!whitelistedFromFee[msg.sender]) {
+        if(!whitelistedFromFee[to]) {
             //tax!
             uint256 taxedAmount = (taxPercentage * _amount) / 10_000;
             amount -= taxedAmount;
@@ -865,6 +864,10 @@ contract CityCoin is ERC20, Ownable {
         return nonce[user];
     }
 
+    function isWhitelisted(address user) external virtual returns(bool) {
+        return whitelistedFromFee[user];
+    }
+
     function mint(address to, uint256 amount) external virtual {
         // only users and contracts with minter role can mint tokens
         require(minter[msg.sender], "mint:not minter");
@@ -890,5 +893,42 @@ contract CityCoin is ERC20, Ownable {
     function burn(uint256 amount) external virtual {
         _burn(msg.sender, amount);
     }
+
+}
+
+
+contract CityCoinFactory is Ownable {
+
+    mapping(string => CityCoin) cityCoinTickerMapping;
+    mapping(string => bool) exists;
+
+    constructor() Ownable() {
+    }
+
+    // @dev can make a city coin with unique ticker only
+    function generateCityCoinContract(string memory name, string memory ticker) public onlyOwner returns(address) {
+        CityCoin citycoin = new CityCoin(name, ticker);
+        cityCoinTickerMapping[ticker] = citycoin;
+        exists[ticker] = true;
+        return address(citycoin);
+    }
+
+    function getCityCoinAddress(string memory ticker) public view returns(address) {
+        return address(cityCoinTickerMapping[ticker]);
+    }
+
+    function transferCityCoinOwnership(string memory ticker, address newOwner) external onlyOwner {
+        require(exists[ticker], 'transferCityCoinOwnership: no such cityCoin');
+        CityCoin cityCoin = cityCoinTickerMapping[ticker];
+        require(cityCoin.owner() == address(this), 'transferCityCoinOwnership: factory contract is not owner');
+        cityCoin.transferOwnership(newOwner);
+    }
+
+    function getCityCoinOwner(string memory ticker) public view returns(address) {
+        require(exists[ticker], 'getCityCoinOwner: no city coin');
+        CityCoin cityCoin = cityCoinTickerMapping[ticker];
+        return cityCoin.owner();
+    }
+
 
 }

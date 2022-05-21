@@ -2,13 +2,14 @@
 const HDWalletProvider = require('@truffle/hdwallet-provider');
 require('dotenv').config()
 
+const mnemonic_test = process.env.MNEMONIC_TEST
 const mnemonic = process.env.MNEMONIC
 
 module.exports = {
   networks: {
     ftm_testnet: {
       //  https://rpcapi.fantom.network for mainnet
-      provider: () => new HDWalletProvider(mnemonic,'https://rpc.testnet.fantom.network/'),
+      provider: () => new HDWalletProvider(mnemonic_test,'https://rpc.testnet.fantom.network/'),
       network_id: 4002, // as seen in error message
       confirmations: 5,
       timeoutBlocks: 200,
@@ -35,7 +36,7 @@ module.exports = {
     },
 
     velas_testnet: {
-      provider: () => new HDWalletProvider(mnemonic, `wss://api.velas.com/`),
+      provider: () => new HDWalletProvider(mnemonic_test, `wss://api.velas.com/`),
       network_id: 111,
       confirmations: 2,
       timeoutBlocks: 10000, // was 500 before
