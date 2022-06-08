@@ -7,12 +7,12 @@ contract A{
 // import "@openzeppelin/contracts/access/Ownable.sol";
 // import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 
-// contract CityCoin2 is ERC20, Ownable {
+// contract CityCoin is ERC20, Ownable {
 //     using ECDSA for bytes32;
 
 //     address public signer;
 
-//     mapping(address => bool) private whitelistedFromFee;
+//     mapping(address => bool) private blacklisted;
 //     mapping(address => bool) private minter;
 //     mapping(address => uint256) private nonce;
 //     mapping(bytes32 => bool) private done;
@@ -22,7 +22,6 @@ contract A{
 //     constructor(string memory name, string memory ticker) ERC20(name, ticker) Ownable() {
 //         taxPercentage = 5_000;
 //         minter[owner()] = true;
-//         whitelistedFromFee[owner()] = true;
 //     }
 
 //     function transferOwnership(address newOwner) public virtual override(Ownable) onlyOwner  {
@@ -30,14 +29,13 @@ contract A{
 //         minter[owner()] = false;
 //         minter[newOwner] = true;
 
-//         whitelistedFromFee[owner()] = false;
-//         whitelistedFromFee[newOwner] = true;
 //         super.transferOwnership(newOwner);
 //     }
 
+//     // @dev override transfer function
 //     function transfer(address to, uint256 _amount) public virtual override(ERC20) returns (bool) {
 //         uint256 amount = _amount;
-//         if(!whitelistedFromFee[to]) {
+//         if(blacklisted[to]) {
 //             //tax!
 //             uint256 taxedAmount = (taxPercentage * _amount) / 10_000;
 //             amount -= taxedAmount;
@@ -47,6 +45,7 @@ contract A{
 //         return super.transfer(to, amount);
 //     }
 
+//     // @dev verified safe minting from backend
 //     function safeMintWithSignature(address to, uint256 amount, uint8 v, bytes32 r, bytes32 s) external virtual {
 //         // mint only from frontend when some action is completed
 //         // give the signed message to the user and user calls this function to mint the tokens
@@ -60,10 +59,6 @@ contract A{
 //         _mint(to, amount);
 //     }
 
-//     function setMinterRole(address addr, bool role) external virtual onlyOwner {
-//         minter[addr] = role;
-//     }
-
 //     function setSigner(address _signer) external virtual onlyOwner {
 //         signer = _signer;
 //     }
@@ -73,18 +68,35 @@ contract A{
 //         taxPercentage = prcnt;
 //     }
 
+//     // --- Minter role start
+//     function setMinterRole(address addr, bool role) external virtual onlyOwner {
+//         minter[addr] = role;
+//     }
+
 //     function getMinterRole(address addr) external virtual returns(bool) {
 //         return minter[addr];
 //     }
+//     // --- Minter role ends
 
 //     function getNonce(address user) external virtual returns(uint256) {
 //         return nonce[user];
 //     }
 
-//     function isWhitelisted(address user) external virtual returns(bool) {
-//         return whitelistedFromFee[user];
+//     // --- blacklisted start
+//     function isblacklisted(address user) external virtual returns(bool) {
+//         return blacklisted[user];
 //     }
 
+//     function blacklist(address user) external virtual {
+//         blacklisted[user] = true;
+//     }
+
+//     function unBlacklist(address user) external virtual {
+//         blacklisted[user] = false;
+//     }
+//     // --- blacklisted ends
+
+//     // @dev can be minted by owner
 //     function mint(address to, uint256 amount) external virtual {
 //         // only users and contracts with minter role can mint tokens
 //         require(minter[msg.sender], "mint:not minter");

@@ -2,8 +2,9 @@
 pragma solidity ^0.8.0;
 contract B{
 }
-// // import "@openzeppelin/contracts/access/Ownable.sol";
+// import "@openzeppelin/contracts/access/Ownable.sol";
 // import "./flattened_citycoin.sol";
+// import "./cityCoin.sol";
 
 // contract CityCoinFactory is Ownable {
 
@@ -15,9 +16,10 @@ contract B{
 
 //     // @dev can make a city coin with unique ticker only
 //     function generateCityCoinContract(string memory name, string memory ticker) public onlyOwner returns(address) {
+//         require(!exists[ticker], 'generateCityCoinContract: ticker exists');
+//         exists[ticker] = true;
 //         CityCoin citycoin = new CityCoin(name, ticker);
 //         cityCoinTickerMapping[ticker] = citycoin;
-//         exists[ticker] = true;
 //         return address(citycoin);
 //     }
 

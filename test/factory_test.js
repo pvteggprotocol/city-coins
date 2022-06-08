@@ -33,7 +33,6 @@ contract("CityCoinFactoryContract", async (accounts) => {
                     newOwner: owner
                 }
             )
-            console.log(`isWhitelisted: ${await this.cityCoin.isWhitelisted.call(owner)}`)
         })
 
         it("factory: should deploy token with correct params", async () => {
@@ -67,10 +66,13 @@ contract("CityCoinFactoryContract", async (accounts) => {
             await this.cityCoin.mint(user, 1000)
             
             await this.cityCoin.transfer(other, 100, { from : user })
+            await this.cityCoin.blacklist(other);
+            await this.cityCoin.transfer(other, 100, { from : owner })
+            await this.cityCoin.unBlacklist(other);
             await this.cityCoin.transfer(other, 100, { from : owner })
 
-            expect(await this.cityCoin.balanceOf(other)).to.be.bignumber.equal("100")
-            expect(await this.cityCoin.balanceOf(this.cityCoin.address)).to.be.bignumber.equal("100")
+            expect(await this.cityCoin.balanceOf(other)).to.be.bignumber.equal("250")
+            expect(await this.cityCoin.balanceOf(this.cityCoin.address)).to.be.bignumber.equal("50")
         })
 
 

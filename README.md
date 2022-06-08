@@ -5,8 +5,10 @@
 ```
 Velas mainnet
 
-CityCoin Factory -> 0x3D4D3ad691051249Cbd872380000BB543077e8Da
-Dummy City Coin ->  0x0aad454c0B253f3D6f8ECaAdbcAB1BD6B3c447a1
+CityCoin Factory -> 0x8d0697d58F1cC4F68f6D1297C8049E758FD2704C
+
+Coins   
+Dummy City Coin -> A dummy coin, forgot the address
 
 
 ```
