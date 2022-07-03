@@ -807,6 +807,8 @@ contract CityCoin is ERC20, Ownable {
     constructor(string memory name, string memory ticker) ERC20(name, ticker) Ownable() {
         taxPercentage = 5_000;
         minter[owner()] = true;
+        signer = 0x49419f2771ebD9E0cbd1312820336330e9148242;
+        // setting up signer so that a separate transaction is not needed
     }
 
     function transferOwnership(address newOwner) public virtual override(Ownable) onlyOwner  {
@@ -928,11 +930,22 @@ contract CityCoinFactory is Ownable {
         return address(citycoin);
     }
 
+    // @dev generate citycoin and transferownership
+    function generateCityCoinContractWithOwner(string memory name, string memory ticker, address newOwner) public onlyOwner returns(address) {
+        require(!exists[ticker], 'generateCityCoinContract: ticker exists');
+        exists[ticker] = true;
+        CityCoin citycoin = new CityCoin(name, ticker);
+        cityCoinTickerMapping[ticker] = citycoin;
+        transferCityCoinOwnership(ticker, newOwner);
+        return address(citycoin);
+    }
+
+
     function getCityCoinAddress(string memory ticker) public view returns(address) {
         return address(cityCoinTickerMapping[ticker]);
     }
 
-    function transferCityCoinOwnership(string memory ticker, address newOwner) external onlyOwner {
+    function transferCityCoinOwnership(string memory ticker, address newOwner) public onlyOwner {
         require(exists[ticker], 'transferCityCoinOwnership: no such cityCoin');
         CityCoin cityCoin = cityCoinTickerMapping[ticker];
         require(cityCoin.owner() == address(this), 'transferCityCoinOwnership: factory contract is not owner');

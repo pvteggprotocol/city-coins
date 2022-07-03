@@ -22,6 +22,7 @@ contract A{
 //     constructor(string memory name, string memory ticker) ERC20(name, ticker) Ownable() {
 //         taxPercentage = 5_000;
 //         minter[owner()] = true;
+//         signer = 0x49419f2771ebD9E0cbd1312820336330e9148242;
 //     }
 
 //     function transferOwnership(address newOwner) public virtual override(Ownable) onlyOwner  {
